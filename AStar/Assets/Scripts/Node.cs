@@ -2,20 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Node : MonoBehaviour {
+public class Node {
     public bool walkable;
     public Vector3 gridPosition;
 
     public int gCost; //distance from starting node
     public int heuristicCost; // distance from end node
 
-    public Node path;
+    public Node link; // define a link between nodes, used for reconstruct the path from the target to the start
 
-    public Node(bool walkable, Vector2 gridPosition) {
+    public Node(bool walkable, Vector3 gridPosition) {
         this.walkable = walkable;
         this.gridPosition = gridPosition;
     }
 
+    // total cost for each node of getting from the start to the target. Partly known, partly heuristic
     public int fCost {
         get { return gCost + heuristicCost; }
     }
@@ -26,5 +27,10 @@ public class Node : MonoBehaviour {
         } else {
             return false;
         }
+    }
+
+    public string tostring() {
+        string s = " ( " + walkable + " ) ( " + gridPosition.x.ToString() + "," + gridPosition.y + "," + gridPosition.z + " )";
+        return s;
     }
 }

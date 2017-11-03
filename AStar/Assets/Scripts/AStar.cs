@@ -3,40 +3,42 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class AStar : MonoBehaviour {
-    private Vector3 startPos;
-    private Vector3 targetPos;
-    private List<Node> cameFrom;
-
     Grid grid;
 
     private void Awake() {
-        startPos = ClickEvent.startPos;
-        targetPos = ClickEvent.targetPos;
+        grid = GetComponent<Grid>();
     }
-    private List<Node> Pathfinding(Vector3 startPos , Vector3 targetPos) {
-        Node startNode = grid.PosToNode(startPos);
-        Node targetNode = grid.PosToNode(targetPos);
-
+    public List<Node> Pathfinding(Vector3 startPos , Vector3 targetPos) {
+        // list of nodes already evaluate
         List<Node> openList = new List<Node>();
+
+        // list of currently discovered nodes that are not evaluated yet
         List<Node> closedList = new List<Node>();
+
+        // the cost from going from start to start is 0
+        Node startNode = grid.PosToNode(startPos);
+        startNode.gCost = 0;
+
+        Node targetNode = grid.PosToNode(targetPos);
 
         openList.Add(startNode);
 
-        while(openList.Count > 0) {
+        while (openList.Count > 0) {
             Node currentNode = openList[0];
             //current := the node in openSet having the lowest fScore[] value
-            for(int i = 0; i < openList.Count; i++) {
-                if(currentNode.fCost >= openList[i].fCost) {
-                    if(currentNode.heuristicCost > openList[i].heuristicCost) {
+            for (int i = 0; i < openList.Count; i++) {
+                // if fcost are equals, compare heuristicCost
+                if (currentNode.fCost >= openList[i].fCost) {
+                //    if (currentNode.heuristicCost > openList[i].heuristicCost) {
                         currentNode = openList[i];
-                    }
+                //    }
                 }
             }
 
-            //if current = goal
-            //return reconstruct_path(cameFrom , current)
 
-            if(currentNode.Equals(targetNode)) {
+            // if the target is found return the path form start to end
+            if (currentNode.Equals(targetNode)) {
+                Debug.Log("...");
                 return ReconstructPath(startNode , targetNode);
             }
 
@@ -44,25 +46,27 @@ public class AStar : MonoBehaviour {
             closedList.Add(currentNode);
 
             List<Node> neighbours = grid.GetNeighbours(currentNode);
-            foreach(Node n in neighbours){
-                if (closedList.Contains(n) || !n.walkable) {
-                    continue;
-                }
-                if (!openList.Contains(n)) {
-                    openList.Add(n);
-                }
+           // Debug.Log("n" + neighbours.Count);
+            foreach (Node n in neighbours) {
+                // ignore the nodes which are already evaluated and represent a wall
+                if (closedList.Contains(n) || !n.walkable) { continue; }
 
-                // The distance from start to a neighbor
-                //tentative_gScore := gScore[current] + dist_between(current, neighbor)
-                //if tentative_gScore >= gScore[neighbor]
-                //  continue		
-                // This is not a better path.
+                // discover a new Node
+                if (!openList.Contains(n)) { openList.Add(n); }
 
-                int gCostToNeighbour = currentNode.gCost + GetDistance(n , targetNode);
-                if(gCostToNeighbour < n.gCost || !openList.Contains(n)) {
+                // distance from start to a neighbour
+                int gCostToNeighbour = currentNode.gCost + GetDistance(n , currentNode);
+                Debug.Log(n.gCost);
+                Debug.Log(GetDistance(n , currentNode));
+                Debug.Log(gCostToNeighbour);
+
+                // this is a better path
+                if (gCostToNeighbour < n.gCost || !openList.Contains(n)) {
+                    // record the path
                     n.gCost = gCostToNeighbour;
                     n.heuristicCost = GetDistance(n , targetNode);
-                    n.path = currentNode;
+                    n.link = currentNode;
+                    Debug.Log(n.link.tostring());
                 }
 
                 if (!openList.Contains(n)) {
@@ -70,14 +74,20 @@ public class AStar : MonoBehaviour {
                 }
             }
         }
-
+        return openList;
     }
 
-    private int GetDistance(Node n1, Node n2) {
+    public int GetDistance(Node n1 , Node n2) {
+        // horizontal
         int distX = Mathf.Abs((int)n1.gridPosition.x - (int)n2.gridPosition.x);
+        // vertical
         int distZ = Mathf.Abs((int)n1.gridPosition.z - (int)n2.gridPosition.z);
 
-        if(distX > distZ) {
+
+        //calcul need the biggest dist
+        //14 is for diagonal move
+        //10 is for vertical and horizontal move    
+        if (distX > distZ) {
             return 14 * distZ + 10 * (distX - distZ);
         }
         else {
@@ -85,16 +95,26 @@ public class AStar : MonoBehaviour {
         }
     }
 
-    private List<Node> ReconstructPath(Node n1, Node n2) {
+    public List<Node> ReconstructPath(Node n1 , Node n2) {
         List<Node> path = new List<Node>();
-        Node targetNode = grid.PosToNode(targetPos);
-        Node startNode = grid.PosToNode(startPos);
+        Debug.Log("g");
+        Node targetNode = grid.PosToNode(ClickEvent.targetPos);
+        Node startNode = grid.PosToNode(ClickEvent.startPos);
         Node currentNode = targetNode;
-        while(currentNode != startNode) {
+
+        // reconstruct path from the end to the start
+        while (!currentNode.Equals(startNode)) {
+            Debug.Log("j");
             path.Add(currentNode);
-            currentNode = currentNode.path;
+            currentNode = currentNode.link;
         }
 
-        return path.Reverse();
+        // path from start to end
+        Debug.Log(path.Count);
+        path.Reverse();
+        Debug.Log(path.Count);
+        grid.pathFromStartToTarget = path;
+
+        return path;
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class ClickEvent : MonoBehaviour {
-    public Camera camera;
+    public new Camera camera;
     private int cpt;
     private Ray ray;
     private RaycastHit hit;
@@ -30,6 +30,7 @@ public class ClickEvent : MonoBehaviour {
                 }
             }
         }
+        
     }
 }
 
