@@ -14,12 +14,12 @@ public class AStar : MonoBehaviour {
 
         // list of currently discovered nodes that are not evaluated yet
         List<Node> closedList = new List<Node>();
-
-        // the cost from going from start to start is 0
+        
         Node startNode = grid.PosToNode(startPos);
-        startNode.gCost = 0;
-
         Node targetNode = grid.PosToNode(targetPos);
+
+        startNode.heuristicCost = GetDistance(startNode, targetNode);
+        startNode.gCost = 0;
 
         openList.Add(startNode);
 
@@ -28,10 +28,11 @@ public class AStar : MonoBehaviour {
             //current := the node in openSet having the lowest fScore[] value
             for (int i = 0; i < openList.Count; i++) {
                 // if fcost are equals, compare heuristicCost
+                openList[i].heuristicCost = GetDistance(openList[i] , targetNode);
                 if (currentNode.fCost >= openList[i].fCost) {
-                //    if (currentNode.heuristicCost > openList[i].heuristicCost) {
+                    if (currentNode.heuristicCost > openList[i].heuristicCost) {
                         currentNode = openList[i];
-                //    }
+                    }
                 }
             }
 
@@ -55,18 +56,15 @@ public class AStar : MonoBehaviour {
                 if (!openList.Contains(n)) { openList.Add(n); }
 
                 // distance from start to a neighbour
-                int gCostToNeighbour = currentNode.gCost + GetDistance(n , currentNode);
-                Debug.Log(n.gCost);
-                Debug.Log(GetDistance(n , currentNode));
-                Debug.Log(gCostToNeighbour);
+                float gCostToNeighbour = currentNode.gCost + GetDistance(n , currentNode);
 
                 // this is a better path
-                if (gCostToNeighbour < n.gCost || !openList.Contains(n)) {
+                if (gCostToNeighbour < n.gCost) {
                     // record the path
                     n.gCost = gCostToNeighbour;
                     n.heuristicCost = GetDistance(n , targetNode);
                     n.link = currentNode;
-                    Debug.Log(n.link.tostring());
+           
                 }
 
                 if (!openList.Contains(n)) {
@@ -85,8 +83,8 @@ public class AStar : MonoBehaviour {
 
 
         //calcul need the biggest dist
-        //14 is for diagonal move
-        //10 is for vertical and horizontal move    
+        //14  for diagonal move
+        //10  for vertical and horizontal move    
         if (distX > distZ) {
             return 14 * distZ + 10 * (distX - distZ);
         }
@@ -95,24 +93,20 @@ public class AStar : MonoBehaviour {
         }
     }
 
-    public List<Node> ReconstructPath(Node n1 , Node n2) {
+    public List<Node> ReconstructPath(Node start , Node end) {
         List<Node> path = new List<Node>();
-        Debug.Log("g");
-        Node targetNode = grid.PosToNode(ClickEvent.targetPos);
-        Node startNode = grid.PosToNode(ClickEvent.startPos);
-        Node currentNode = targetNode;
+        Node currentNode = end;
 
         // reconstruct path from the end to the start
-        while (!currentNode.Equals(startNode)) {
-            Debug.Log("j");
+        while (!currentNode.Equals(start)) {
             path.Add(currentNode);
             currentNode = currentNode.link;
         }
 
+        path.Add(start);
         // path from start to end
-        Debug.Log(path.Count);
         path.Reverse();
-        Debug.Log(path.Count);
+        
         grid.pathFromStartToTarget = path;
 
         return path;

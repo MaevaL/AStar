@@ -6,8 +6,8 @@ public class Node {
     public bool walkable;
     public Vector3 gridPosition;
 
-    public int gCost; //distance from starting node
-    public int heuristicCost; // distance from end node
+    public float gCost = Mathf.Infinity; //distance from starting node
+    public float heuristicCost; // distance from end node
 
     public Node link; // define a link between nodes, used for reconstruct the path from the target to the start
 
@@ -17,7 +17,7 @@ public class Node {
     }
 
     // total cost for each node of getting from the start to the target. Partly known, partly heuristic
-    public int fCost {
+    public float fCost {
         get { return gCost + heuristicCost; }
     }
 
@@ -30,7 +30,7 @@ public class Node {
     }
 
     public string tostring() {
-        string s = " ( " + walkable + " ) ( " + gridPosition.x.ToString() + "," + gridPosition.y + "," + gridPosition.z + " )";
+        string s = " ( " + walkable + " ) ( " + gridPosition.x + "," + gridPosition.y + "," + gridPosition.z + " )";
         return s;
     }
 }

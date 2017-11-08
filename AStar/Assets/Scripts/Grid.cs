@@ -16,18 +16,9 @@ public class Grid : MonoBehaviour {
     // Use this for initialization
     void Start() {
         GenerateGrid();
-        //foreach (Node n in nodes) {
-        //    Debug.Log(n.tostring());
-        //}
-
-        //for (int i = 0; i < gridSize.x; i++) {
-        //    for (int j = 0; j < gridSize.z; j++) {
-        //        Debug.Log(nodes[i , j].tostring());
-        //    }
-        //}
 
         aStar = GetComponent<AStar>();
-        aStar.Pathfinding(new Vector3(0 , 0 , 0) , new Vector3(0 , 0 , 6));
+        aStar.Pathfinding(new Vector3(0 , 0 , 0) , new Vector3(9 , 0 , 9));
 
     }
 
@@ -36,10 +27,8 @@ public class Grid : MonoBehaviour {
     private void OnDrawGizmos() {
         
         if(pathFromStartToTarget != null) {
-            //Debug.Log(pathFromStartToTarget.Count);
             foreach (Node n in pathFromStartToTarget) {
                 Gizmos.color = Color.black;
-                //Debug.Log("...");
             }
         }
     }
