@@ -4,9 +4,13 @@ using UnityEngine;
 
 public class AStar : MonoBehaviour {
     Grid grid;
-
-    private void Awake() {
-        grid = GetComponent<Grid>();
+    private void Start() {
+        GameObject gridObject = GameObject.FindGameObjectWithTag("grid");
+        grid = gridObject.GetComponent<Grid>();
+        Vector3 startPos = transform.position;
+        Debug.Log(startPos);
+        Vector3 targetPos = new Vector3(9, 0, 9);
+        Pathfinding(startPos, targetPos);
     }
     public List<Node> Pathfinding(Vector3 startPos , Vector3 targetPos) {
         // list of nodes already evaluate
@@ -106,8 +110,11 @@ public class AStar : MonoBehaviour {
         path.Add(start);
         // path from start to end
         path.Reverse();
+
+		foreach (Node n in path) {
+			Debug.Log(n.tostring ());
+		}
         
-        grid.pathFromStartToTarget = path;
 
         return path;
     }
