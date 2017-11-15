@@ -16,13 +16,14 @@ public class Grid : MonoBehaviour {
     }
 
     private void GenerateGridPacMan() {
-        nodes = new Node[(int)gridSize.x, (int)gridSize.z];
+        nodes = new Node[(int)gridSize.x , (int)gridSize.z];
         foreach (Transform child in transform) {
             Vector3 posChild = child.transform.position;
             if (child.CompareTag("unWalkable")) {
-                nodes[(int)posChild.x, (int)posChild.z] = new Node(false, posChild);
-            } else {
-                nodes[(int)posChild.x, (int)posChild.z] = new Node(true, posChild);
+                nodes[(int)posChild.x , (int)posChild.z] = new Node(false , posChild);
+            }
+            else {
+                nodes[(int)posChild.x , (int)posChild.z] = new Node(true , posChild);
             }
         }
     }

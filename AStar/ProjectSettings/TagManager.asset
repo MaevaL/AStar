@@ -6,6 +6,8 @@ TagManager:
   tags:
   - unWalkable
   - grid
+  - Enemy
+  - Border
   layers:
   - Default
   - TransparentFX
