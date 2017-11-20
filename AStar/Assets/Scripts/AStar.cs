@@ -34,7 +34,7 @@ public class AStar : MonoBehaviour {
 
         while (openList.Count > 0) {
             Node currentNode = openList[0];
-            //current := the node in openSet having the lowest fScore[] value
+            //the node in openSet having the lowest fScore
             for (int i = 0; i < openList.Count; i++) {
                 // if fcost are equals, compare heuristicCost
                 openList[i].heuristicCost = GetDistance(openList[i] , targetNode);

@@ -7,7 +7,6 @@ public class Grid : MonoBehaviour {
     public Vector3 gridSize;
     private int rnd;
     public Node[,] nodes;
-    //public List<Node> pathFromStartToTarget;
 
 
     // Use this for initialization

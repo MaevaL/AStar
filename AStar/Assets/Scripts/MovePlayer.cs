@@ -7,11 +7,13 @@ public class MovePlayer : MonoBehaviour {
     public bool isPlayed;
     GameObject enemy;
     bool firstTurn;
+    int cpt = 0;
     private void Start() {
         grid = FindObjectOfType<Grid>();
         isPlayed = false;
         firstTurn = true;
         enemy = GameObject.FindGameObjectWithTag("Enemy");
+        
     }
 
     // Update is called once per frame
